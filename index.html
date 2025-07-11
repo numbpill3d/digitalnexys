@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Shadows - Cyber Noir District</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Courier+Prime:wght@400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --neon-blue: #00ffff;
+            --neon-pink: #ff00ff;
+            --neon-green: #00ff00;
+            --dark-bg: #0a0a0a;
+            --darker-bg: #050505;
+            --gray-1: #1a1a1a;
+            --gray-2: #2a2a2a;
+            --gray-3: #3a3a3a;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+        }
+
+        body {
+            font-family: 'Courier Prime', monospace;
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* Animated Background */
+        .bg-matrix {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -3;
+            opacity: 0.1;
+            background: linear-gradient(45deg, 
+                rgba(0, 255, 255, 0.05) 0%, 
+                rgba(255, 0, 255, 0.05) 50%, 
+                rgba(0, 255, 0, 0.05) 100%);
+            animation: matrixShift 15s infinite linear;
+        }
+
+        @keyframes matrixShift {
+            0% { transform: translateX(-100%) translateY(-100%); }
+            100% { transform: translateX(100%) translateY(100%); }
+        }
+
+        /* Scanlines Effect */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 255, 255, 0.1) 2px,
+                rgba(0, 255, 255, 0.1) 4px
+            );
+            animation: scanlineMove 0.1s infinite linear;
+        }
+
+        @keyframes scanlineMove {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(4px); }
+        }
+
+        /* Rain Effect */
+        .rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            pointer-events: none;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><line x1="50" y1="0" x2="45" y2="100" stroke="rgba(0,255,255,0.3)" stroke-width="1"/><line x1="20" y1="0" x2="15" y2="100" stroke="rgba(0,255,255,0.2)" stroke-width="0.5"/><line x1="80" y1="0" x2="75" y2="100" stroke="rgba(0,255,255,0.4)" stroke-width="1.5"/></svg>') repeat;
+            animation: rainFall 0.5s infinite linear;
+        }
+
+        @keyframes rainFall {
+            0% { transform: translateY(-100px); }
+            100% { transform: translateY(100px); }
+        }
+
+        /* Windows 98 Style Taskbar */
+        .taskbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background: linear-gradient(to bottom, var(--gray-2), var(--gray-1));
+            border-top: 2px solid var(--neon-blue);
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            z-index: 1000;
+            box-shadow: 0 -2px 10px rgba(0, 255, 255, 0.3);
+        }
+
+        .start-button {
+            background: linear-gradient(to bottom, var(--gray-3), var(--gray-1));
+            border: 2px outset var(--gray-2);
+            color: var(--text-primary);
+            padding: 4px 15px;
+            font-family: 'Courier Prime', monospace;
+            font-size: 12px;
+            cursor: pointer;
+            margin-right: 10px;
+            text-shadow: 0 0 5px var(--neon-blue);
+            transition: all 0.2s;
+        }
+
+        .start-button:hover {
+            box-shadow: 0 0 10px var(--neon-blue);
+            text-shadow: 0 0 8px var(--neon-blue);
+        }
+
+        .taskbar-icons {
+            display: flex;
+            gap: 5px;
+            flex: 1;
+        }
+
+        .taskbar-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--gray-2);
+            border: 1px outset var(--gray-3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--neon-green);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-shadow: 0 0 3px currentColor;
+        }
+
+        .taskbar-icon:hover {
+            background: var(--gray-3);
+            box-shadow: 0 0 8px currentColor;
+            text-shadow: 0 0 6px currentColor;
+        }
+
+        .taskbar-time {
+            background: var(--gray-1);
+            border: 1px inset var(--gray-2);
+            padding: 2px 8px;
+            font-size: 11px;
+            color: var(--neon-pink);
+            text-shadow: 0 0 3px var(--neon-pink);
+        }
+
+        /* Main Layout */
+        .container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding-bottom: 40px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--darker-bg), var(--gray-1));
+            border-bottom: 2px solid var(--neon-blue);
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .header h1 {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(2rem, 5vw, 4rem);
+            color: var(--neon-blue);
+            text-shadow: 0 0 20px var(--neon-blue), 0 0 40px var(--neon-blue);
+            animation: neonFlicker 2s infinite alternate;
+            margin-bottom: 10px;
+        }
+
+        @keyframes neonFlicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            color: var(--neon-pink);
+            text-shadow: 0 0 10px var(--neon-pink);
+            opacity: 0.8;
+        }
+
+        /* Navigation */
+        .nav {
+            background: var(--gray-1);
+            border-bottom: 1px solid var(--gray-3);
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-item {
+            background: var(--gray-2);
+            border: none;
+            color: var(--text-primary);
+            padding: 15px 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-right: 1px solid var(--gray-3);
+            font-family: 'Courier Prime', monospace;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: var(--gray-3);
+            color: var(--neon-green);
+            text-shadow: 0 0 8px var(--neon-green);
+            box-shadow: inset 0 -3px 0 var(--neon-green);
+        }
+
+        /* Main Content Area */
+        .main-wrapper {
+            display: flex;
+            flex: 1;
+            gap: 20px;
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: var(--gray-1);
+            border: 1px solid var(--gray-3);
+            padding: 20px;
+            height: fit-content;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .sidebar h3 {
+            color: var(--neon-pink);
+            font-family: 'Orbitron', monospace;
+            text-shadow: 0 0 5px var(--neon-pink);
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--gray-3);
+            padding-bottom: 10px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar li {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--gray-2);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .sidebar li:hover {
+            color: var(--neon-green);
+            text-shadow: 0 0 5px var(--neon-green);
+            transform: translateX(5px);
+        }
+
+        .sidebar li::before {
+            content: "> ";
+            color: var(--neon-blue);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            background: var(--gray-1);
+            border: 1px solid var(--gray-3);
+            min-height: 600px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Tab System */
+        .tab-buttons {
+            display: flex;
+            background: var(--darker-bg);
+            border-bottom: 1px solid var(--gray-3);
+        }
+
+        .tab-button {
+            background: var(--gray-2);
+            border: none;
+            color: var(--text-secondary);
+            padding: 15px 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-right: 1px solid var(--gray-3);
+            font-family: 'Courier Prime', monospace;
+        }
+
+        .tab-button.active {
+            background: var(--gray-1);
+            color: var(--neon-blue);
+            text-shadow: 0 0 5px var(--neon-blue);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+            height: calc(100% - 50px);
+            overflow-y: auto;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Scrollbox */
+        .scrollbox {
+            background: var(--darker-bg);
+            border: 1px solid var(--gray-3);
+            padding: 20px;
+            height: 200px;
+            overflow-y: auto;
+            margin: 20px 0;
+            font-family: 'Courier Prime', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .scrollbox::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        .scrollbox::-webkit-scrollbar-track {
+            background: var(--gray-1);
+        }
+
+        .scrollbox::-webkit-scrollbar-thumb {
+            background: var(--neon-blue);
+            border-radius: 6px;
+        }
+
+        /* Image Gallery */
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .gallery-item {
+            background: var(--gray-2);
+            border: 1px solid var(--gray-3);
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--neon-green);
+            font-size: 24px;
+        }
+
+        .gallery-item:hover {
+            background: var(--gray-3);
+            box-shadow: 0 0 15px var(--neon-green);
+            text-shadow: 0 0 8px var(--neon-green);
+            transform: scale(1.05);
+        }
+
+        /* Collapsible Content */
+        .collapsible {
+            margin: 20px 0;
+        }
+
+        .collapsible-header {
+            background: var(--gray-2);
+            border: 1px solid var(--gray-3);
+            padding: 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .collapsible-header:hover {
+            background: var(--gray-3);
+            color: var(--neon-pink);
+            text-shadow: 0 0 5px var(--neon-pink);
+        }
+
+        .collapsible-content {
+            background: var(--darker-bg);
+            border: 1px solid var(--gray-3);
+            border-top: none;
+            padding: 20px;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Animated Text */
+        .typing-text {
+            border-right: 2px solid var(--neon-green);
+            animation: typing 3s steps(40, end), blink-caret 0.75s step-end infinite;
+            white-space: nowrap;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: var(--neon-green); }
+        }
+
+        /* Buttons */
+        .neon-button {
+            background: transparent;
+            border: 2px solid var(--neon-blue);
+            color: var(--neon-blue);
+            padding: 12px 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Courier Prime', monospace;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 10px 5px;
+        }
+
+        .neon-button:hover {
+            background: var(--neon-blue);
+            color: var(--dark-bg);
+            box-shadow: 0 0 20px var(--neon-blue);
+            text-shadow: none;
+        }
+
+        /* Popup */
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--gray-1);
+            border: 2px solid var(--neon-pink);
+            padding: 30px;
+            z-index: 2000;
+            display: none;
+            box-shadow: 0 0 30px var(--neon-pink);
+            min-width: 300px;
+        }
+
+        .popup-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1999;
+            display: none;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--gray-1);
+            border-top: 1px solid var(--gray-3);
+            padding: 30px 20px;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .footer-section h4 {
+            color: var(--neon-green);
+            font-family: 'Orbitron', monospace;
+            text-shadow: 0 0 5px var(--neon-green);
+            margin-bottom: 15px;
+        }
+
+        .footer-section a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s;
+            display: block;
+            padding: 5px 0;
+        }
+
+        .footer-section a:hover {
+            color: var(--neon-blue);
+            text-shadow: 0 0 5px var(--neon-blue);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-wrapper {
+                flex-direction: column;
+                padding: 10px;
+            }
+            
+            .sidebar {
+                width: 100%;
+                order: 2;
+            }
+            
+            .nav {
+                flex-direction: column;
+            }
+            
+            .tab-buttons {
+                flex-wrap: wrap;
+            }
+            
+            .taskbar {
+                position: relative;
+                height: auto;
+                padding: 10px;
+            }
+            
+            .container {
+                padding-bottom: 0;
+            }
+        }
+
+        /* Additional Neon Effects */
+        .glow-text {
+            color: var(--neon-pink);
+            text-shadow: 0 0 10px var(--neon-pink);
+        }
+
+        .distorted {
+            filter: contrast(150%) brightness(120%);
+            position: relative;
+        }
+
+        .distorted::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 2px,
+                rgba(255, 0, 255, 0.05) 2px,
+                rgba(255, 0, 255, 0.05) 4px
+            );
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Effects -->
+    <div class="bg-matrix"></div>
+    <div class="scanlines"></div>
+    <div class="rain"></div>
+
+    <!-- Windows 98 Style Taskbar -->
+    <div class="taskbar">
+        <button class="start-button">START</button>
+        <div class="taskbar-icons">
+            <div class="taskbar-icon" title="Terminal">T</div>
+            <div class="taskbar-icon" title="Data">D</div>
+            <div class="taskbar-icon" title="Network">N</div>
+            <div class="taskbar-icon" title="Security">S</div>
+            <div class="taskbar-icon" title="Files">F</div>
+        </div>
+        <div class="taskbar-time" id="taskbar-time">23:42</div>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>DIGITAL SHADOWS</h1>
+            <div class="subtitle">// Cyber District Terminal Interface v2.1</div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav">
+            <button class="nav-item active" onclick="switchNav(this, 'overview')">Overview</button>
+            <button class="nav-item" onclick="switchNav(this, 'surveillance')">Surveillance</button>
+            <button class="nav-item" onclick="switchNav(this, 'data')">Data Mining</button>
+            <button class="nav-item" onclick="switchNav(this, 'network')">Network</button>
+            <button class="nav-item" onclick="switchNav(this, 'archives')">Archives</button>
+        </nav>
+
+        <!-- Main Content Wrapper -->
+        <div class="main-wrapper">
+            <!-- Left Sidebar -->
+            <aside class="sidebar">
+                <h3>QUICK ACCESS</h3>
+                <ul>
+                    <li onclick="showPopup()">System Status</li>
+                    <li>Neural Networks</li>
+                    <li>Quantum Processors</li>
+                    <li>Memory Banks</li>
+                    <li>Security Protocols</li>
+                    <li>Data Streams</li>
+                    <li>AI Subsystems</li>
+                    <li>Backup Systems</li>
+                </ul>
+
+                <h3 style="margin-top: 30px;">THREAT LEVEL</h3>
+                <ul>
+                    <li style="color: var(--neon-green);">Low Risk Zones</li>
+                    <li style="color: orange;">Medium Alerts</li>
+                    <li style="color: var(--neon-pink);">High Priority</li>
+                    <li style="color: red;">Critical Systems</li>
+                </ul>
+            </aside>
+
+            <!-- Main Content Area -->
+            <main class="main-content">
+                <!-- Tab Buttons -->
+                <div class="tab-buttons">
+                    <button class="tab-button active" onclick="switchTab(this, 'terminal')">Terminal</button>
+                    <button class="tab-button" onclick="switchTab(this, 'gallery')">Gallery</button>
+                    <button class="tab-button" onclick="switchTab(this, 'data')">Data</button>
+                    <button class="tab-button" onclick="switchTab(this, 'logs')">System Logs</button>
+                </div>
+
+                <!-- Tab Content -->
+                <div class="tab-content active" id="terminal">
+                    <h2 class="glow-text">MAIN TERMINAL INTERFACE</h2>
+                    <p>Welcome to the Digital Shadows network. All systems are operational.</p>
+                    
+                    <div class="scrollbox">
+                        <div class="typing-text" style="width: 100%; white-space: normal;">
+                            Initializing neural pathways...<br>
+                            > Loading quantum processors... OK<br>
+                            > Establishing secure connections... OK<br>
+                            > Accessing memory banks... OK<br>
+                            > Synchronizing data streams... OK<br>
+                            > Activating surveillance protocols... OK<br>
+                            > System ready for operation<br>
+                            <br>
+                            [NOTICE] Anomalous activity detected in sector 7<br>
+                            [INFO] Data mining operation 47.3% complete<br>
+                            [WARNING] Unauthorized access attempt blocked<br>
+                            [STATUS] All defensive systems online<br>
+                        </div>
+                    </div>
+
+                    <div class="collapsible">
+                        <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                            <span>Advanced Options</span>
+                            <span>+</span>
+                        </div>
+                        <div class="collapsible-content">
+                            <p>Configure advanced system parameters, modify security protocols, and access restricted databases.</p>
+                            <button class="neon-button">Execute Command</button>
+                            <button class="neon-button">Scan Network</button>
+                            <button class="neon-button">Generate Report</button>
+                        </div>
+                    </div>
+
+                    <div class="collapsible">
+                        <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                            <span>System Resources</span>
+                            <span>+</span>
+                        </div>
+                        <div class="collapsible-content">
+                            <p>Monitor system performance, resource allocation, and processing capabilities.</p>
+                            <ul style="list-style: none; padding: 10px 0;">
+                                <li>> CPU Usage: 78.4%</li>
+                                <li>> Memory: 12.7GB / 64GB</li>
+                                <li>> Network I/O: 1.2TB/s</li>
+                                <li>> Storage: 847TB / 2.1PB</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="gallery">
+                    <h2 class="glow-text">VISUAL SURVEILLANCE DATA</h2>
+                    <p>Classified imagery and reconnaissance data from various sectors.</p>
+                    
+                    <div class="image-gallery">
+                        <div class="gallery-item distorted">IMG_001</div>
+                        <div class="gallery-item distorted">IMG_002</div>
+                        <div class="gallery-item distorted">IMG_003</div>
+                        <div class="gallery-item distorted">IMG_004</div>
+                        <div class="gallery-item distorted">IMG_005</div>
+                        <div class="gallery-item distorted">IMG_006</div>
+                    </div>
+                    
+                    <button class="neon-button">Load More Images</button>
+                    <button class="neon-button">Export Data</button>
+                </div>
+
+                <div class="tab-content" id="data">
+                    <h2 class="glow-text">DATA ANALYSIS MATRIX</h2>
+                    <p>Real-time data streams and analytical processing results.</p>
+                    
+                    <div class="scrollbox">
+                        Data Stream Alpha: [████████████████████] 100% Complete<br>
+                        Data Stream Beta:  [████████████▒▒▒▒▒▒▒▒] 67% Complete<br>
+                        Data Stream Gamma: [██████▒▒▒▒▒▒▒▒▒▒▒▒▒▒] 34% Complete<br>
+                        <br>
+                        Processing Results:<br>
+                        > Pattern Recognition: 8,742 matches found<br>
+                        > Anomaly Detection: 3 outliers identified<br>
+                        > Correlation Analysis: 94.7% accuracy<br>
+                        > Predictive Modeling: 2.3% error margin<br>
+                        <br>
+                        [ALERT] Critical data pattern detected<br>
+                        [INFO] Backup synchronization in progress<br>
+                    </div>
+                    
+                    <div class="collapsible">
+                        <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                            <span>Data Export Options</span>
+                            <span>+</span>
+                        </div>
+                        <div class="collapsible-content">
+                            <button class="neon-button">Export CSV</button>
+                            <button class="neon-button">Export JSON</button>
+                            <button class="neon-button">Export Binary</button>
+                            <button class="neon-button">Generate Visualization</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="logs">
+                    <h2 class="glow-text">SYSTEM EVENT LOGS</h2>
+                    <p>Chronological record of all system events and security incidents.</p>
+                    
+                    <div class="scrollbox">
+                        23:42:15 - INFO: System checkpoint created<br>
+                        23:41:47 - WARN: High memory usage detected<br>
+                        23:41:12 - INFO: Data backup completed successfully<br>
+                        23:40:33 - ERROR: Connection timeout on port 8080<br>
+                        23:39:58 - INFO: User authentication successful<br>
+                        23:39:21 - WARN: Suspicious network activity<br>
+                        23:38:44 - INFO: Scheduled maintenance completed<br>
+                        23:38:02 - DEBUG: Cache cleanup initiated<br>
+                        23:37:15 - INFO: Security scan completed<br>
+                        23:36:47 - ERROR: Database connection lost<br>
+                        23:36:12 - INFO: Failover system activated<br>
+                        23:35:33 - WARN: Disk space usage at 89%<br>
+                        23:34:58 - INFO: Neural network training cycle complete<br>
+                        23:34:21 - DEBUG: Memory defragmentation started<br>
+                    </div>
+                    
+                    <button class="neon-button">Refresh Logs</button>
+                    <button class="neon-button">Filter Events</button>
+                    <button class="neon-button">Export Logs</button>
+                </div>
+            </main>
+
+            <!-- Right Sidebar -->
+            <aside class="sidebar">
+                <h3>ACTIVE CONNECTIONS</h3>
+                <ul>
+                    <li>Node Alpha-7: Online</li>
+                    <li>Node Beta-3: Online</li>
+                    <li>Node Gamma-1: Offline</li>
+                    <li>Node Delta-9: Online</li>
+                    <li>Node Epsilon-5: Online</li>
+                    <li>Node Zeta-2: Maintenance</li>
+                </ul>
+
+                <h3 style="margin-top: 30px;">RECENT ACTIVITY</h3>
+                <ul>
+                    <li>Data mining completed</li>
+                    <li>Security scan initiated</li>
+                    <li>Backup process started</li>
+                    <li>User logged in</li>
+                    <li>System updated</li>
+                    <li>Network synchronized</li>
+                </ul>
+            </aside>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>System Information</h4>
+                    <a href="#">Version 2.1.7</a>
+                    <a href="#">Build 20250711</a>
+                    <a href="#">Last Updated: Today</a>
+                    <a href="#">License: Classified</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Network Status</h4>
+                    <a href="#">Uptime: 847 days</a>
+                    <a href="#">Connections: 15,742</a>
+                    <a href="#">Data Processed: 2.7PB</a>
+                    <a href="#">Security Level: Maximum</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Support Links</h4>
+                    <a href="#">Documentation</a>
+                    <a href="#">Technical Support</a>
+                    <a href="#">Emergency Protocols</a>
+                    <a href="#">Contact Administrator</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Popup -->
+    <div class="popup-backdrop" onclick="hidePopup()"></div>
+    <div class="popup" id="popup">
+        <h3 class="glow-text">SYSTEM STATUS</h3>
+        <p>All systems operational. No critical errors detected.</p>
+        <div style="margin: 20px 0;">
+            <div>> Power Systems: <span style="color: var(--neon-green);">ONLINE</span></div>
+            <div>> Network Interface: <span style="color: var(--neon-green);">ONLINE</span></div>
+            <div>> Security Protocols: <span style="color: var(--neon-green);">ACTIVE</span></div>
+            <div>> Data Integrity: <span style="color: var(--neon-green);">VERIFIED</span></div>
+        </div>
+        <button class="neon-button" onclick="hidePopup()">Close</button>
+    </div>
+
+    <script>
+        // Update time in taskbar
+        function updateTime() {
+            const now = new Date();
+            const time = now.toLocaleTimeString('en-US', { 
+                hour12: false, 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            document.getElementById('taskbar-time').textContent = time;
+        }
+
+        // Tab switching functionality
+        function switchTab(button, tabId) {
+            // Remove active class from all tab buttons and contents
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Add active class to clicked button and corresponding content
+            button.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // Navigation switching (placeholder functionality)
+        function switchNav(button, section) {
+            document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            
+            // Add visual feedback
+            button.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                button.style.transform = 'scale(1)';
+            }, 150);
+        }
+
+        // Collapsible content toggle
+        function toggleCollapsible(header) {
+            const content = header.nextElementSibling;
+            const indicator = header.querySelector('span:last-child');
+            
+            if (content.style.display === 'block') {
+                content.style.display = 'none';
+                indicator.textContent = '+';
+            } else {
+                content.style.display = 'block';
+                indicator.textContent = '-';
+            }
+        }
+
+        // Popup functions
+        function showPopup() {
+            document.querySelector('.popup-backdrop').style.display = 'block';
+            document.getElementById('popup').style.display = 'block';
+        }
+
+        function hidePopup() {
+            document.querySelector('.popup-backdrop').style.display = 'none';
+            document.getElementById('popup').style.display = 'none';
+        }
+
+        // Add click effects to taskbar icons
+        document.querySelectorAll('.taskbar-icon').forEach(icon => {
+            icon.addEventListener('click', function() {
+                this.style.transform = 'scale(0.9)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 100);
+            });
+        });
+
+        // Add hover effects to gallery items
+        document.querySelectorAll('.gallery-item').forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.filter = 'brightness(150%) contrast(120%) hue-rotate(45deg)';
+            });
+            
+            item.addEventListener('mouseleave', function() {
+                this.style.filter = 'contrast(150%) brightness(120%)';
+            });
+        });
+
+        // Glitch effect for certain elements
+        function addGlitchEffect() {
+            const glitchElements = document.querySelectorAll('.glow-text');
+            glitchElements.forEach(element => {
+                if (Math.random() < 0.1) { // 10% chance
+                    element.style.transform = `translateX(${Math.random() * 4 - 2}px)`;
+                    element.style.filter = 'hue-rotate(' + Math.random() * 360 + 'deg)';
+                    setTimeout(() => {
+                        element.style.transform = 'translateX(0)';
+                        element.style.filter = 'none';
+                    }, 100);
+                }
+            });
+        }
+
+        // Enhanced neon button effects
+        document.querySelectorAll('.neon-button').forEach(button => {
+            button.addEventListener('mouseenter', function() {
+                this.style.animation = 'none';
+                this.style.boxShadow = `0 0 30px ${getComputedStyle(this).borderColor}`;
+            });
+            
+            button.addEventListener('mouseleave', function() {
+                this.style.boxShadow = 'none';
+            });
+        });
+
+        // Matrix background animation enhancement
+        function createMatrixParticles() {
+            const matrix = document.querySelector('.bg-matrix');
+            if (Math.random() < 0.3) {
+                const particle = document.createElement('div');
+                particle.style.position = 'absolute';
+                particle.style.width = '2px';
+                particle.style.height = '2px';
+                particle.style.background = 'var(--neon-blue)';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.opacity = '0.5';
+                particle.style.animation = 'matrixFade 2s ease-out forwards';
+                matrix.appendChild(particle);
+                
+                setTimeout(() => {
+                    particle.remove();
+                }, 2000);
+            }
+        }
+
+        // Add CSS for matrix fade animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes matrixFade {
+                0% { opacity: 0.8; transform: scale(1); }
+                100% { opacity: 0; transform: scale(0); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize all effects
+        updateTime();
+        setInterval(updateTime, 1000);
+        setInterval(addGlitchEffect, 2000);
+        setInterval(createMatrixParticles, 500);
+
+        // Console welcome message
+        console.log('%c🌆 DIGITAL SHADOWS TERMINAL LOADED 🌆', 'color: #00ffff; font-size: 16px; font-weight: bold;');
+        console.log('%cSystem Status: OPERATIONAL', 'color: #00ff00;');
+        console.log('%cSecurity Level: MAXIMUM', 'color: #ff00ff;');
+    </script>
+</body>
+</html>
